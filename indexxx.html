@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html>
+  <title>Violation Amounts Due</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+  <link rel="icon" type="image/png" href="https://nycdob.github.io/EssentialActiveConstruction/images/logo.png">
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="https://nycdob.github.io/ActiveNB_A1enlargements/keen/keen-dashboards.css" />
+  <link href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css' rel='stylesheet' type='text/css'/>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.12/r-2.1.0/se-1.2.0/datatables.min.css">
+  <link href="https://nycdob.github.io/ActiveNB_A1enlargements/build/nv.d3.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" href="https://nycdob.github.io/ActiveShedPermits/build/nouislider.css" media="screen" />
+  <style>
+
+.filterTableButton {
+	margin-right:5px;
+}
+#riskTable_info{
+	font-weight:bolder !important;
+}
+.row{
+	padding-top: 10px;
+}
+body {
+	background-color: white;
+}
+.jobno{
+	margin-left: 20px;
+}
+#map {
+	height: 100%;
+	width: 100%;
+	pointer-events: all;
+}
+#table-container{
+	height: 890px;
+	width: 100%;
+	display: block;
+	background-color: white;
+}
+#img{
+	float: left;
+	height: 35px;
+	margin-left: 10px;
+	padding-right: 10px;
+}
+
+#riskTable{
+	height: 100%;
+	font-size: 11px;
+}
+
+
+td.details-control {
+	background: url('https://datatables.net/examples/resources/details_open.png') no-repeat center center;
+	cursor: pointer;
+}
+tr.shown td.details-control {
+	background: url('https://datatables.net/examples/resources/details_close.png') no-repeat center center;
+	cursor: pointer;
+}
+
+
+.logo{
+	/* background-image: url('data/dob_transparent_highres.png'); */
+	background-image: url('https://raw.githubusercontent.com/NYCDOB/CommunityProfiles_v2/gh-pages/dob_logo_white_transparent.png');
+	background-repeat: no-repeat;
+	background-position: center;
+	float: right;
+	background-size: 80px;
+	height: 50px;
+	width: 110px;	  
+}
+.pointNonCom{
+	fill: #547A95;
+	fill-opacity: .5;
+	stroke: #fff;
+
+}
+.pointCom{
+	fill: #DA8012;
+	fill-opacity: .5;
+	stroke: #fff;
+
+}
+
+.tooltipSheds {
+    z-index: 500;
+	visibility: hidden;
+    color:black;
+	background: #fff;
+	border-radius: 3px; 
+	opacity: 0.9; 
+	position: absolute;
+    border: 1px solid #707070;
+	bottom: 5px;
+	width: 30em;
+	font-size:1.1em;
+	left:5px;
+	display:flex;
+	max-height:50%;
+	flex-direction: column;	
+
+}
+
+.dataTables_empty {
+  display:none;
+}
+.asofDate{
+	font-size:16px;
+}
+._cycleD {
+padding: 2px 10px 10px;
+overflow-y:auto;
+}
+._cycleD > div{
+display: flex;
+margin: 3px 0px;
+
+}
+._fM3_0 :nth-child(1){
+flex:5;
+}
+._fM3_0 :nth-child(2){
+flex:4;
+}
+._b {
+font-weight:600;
+font-size: 1.2em;
+padding:10px;
+margin:0px;
+}
+._cor{
+color:white;display:none;
+}
+._nav{
+flex:1;
+}
+._tD{
+background-color: #969696 ;/*rgb(43, 119, 241);*/
+color: white;
+display:flex;
+padding:0 10px;
+}
+._tD div {
+align-self:center;
+}
+._tD :nth-child(2) {
+flex:1;
+}
+._pr, ._nx,._cl {
+font-size:1.2em;
+cursor:pointer;
+}
+._cl{
+float:right;
+}
+a.ndec{
+text-decoration: none;
+}
+.material-symbols-outlined {
+font-variation-settings:
+'FILL' 0,
+'wght' 110,
+'GRAD' -25,
+'opsz' 10;
+font-size: 12px;
+}
+@media( max-width:1200px){
+	.dobmain	{
+		padding-top:50px;
+	}
+	.legendShed {
+		visibility:hidden;
+	}
+	.legendCD {
+		visibility:hidden;
+	}
+}
+
+@media ( max-width:2100px){
+	.summarytxt_sheds {
+		font-size: 12px !important;
+	}
+	.summarytxt_avgAge {
+		font-size: 12px !important;
+	}
+	.summarytxt_feet {
+		font-size: 12px !important;
+	}
+	#summary1_sheds {
+		font-size: 25px !important;
+	}
+	#summary2_avgAge {
+		font-size: 25px !important;
+	}
+	#summary3_feet {
+		font-size: 25px !important;
+	}
+	.summarytxt {
+		font-size: 12px !important;
+	}
+
+}
+
+.dataTables_filter input { width: 150px }
+
+#loadpage{
+	margin: auto;
+	padding-top: 300px;
+}
+#button-wrapper {
+	position: absolute;
+	top: 20px;
+	left: 60px;
+	padding: 15px;
+	border-radius: 5px;
+	background-color: rgba(192,192,192,0.9);
+	border: 2px solid white;
+}
+.btnStyle {
+	border-radius: 5px;
+	background-color: white;
+	border: 1px solid #7a7a7a;
+	color: black;
+	font-size: 13px;
+	font-weight: bold;
+	padding: 4px;
+	width: 100%;
+	
+}
+svg {
+	display: block;
+}
+#chart-01{
+    box-sizing: border-box;
+    width: 100%;
+	height: 100%;
+    float: left;
+	background-color: #c7c7c7;
+}
+#chart-02{
+    box-sizing: border-box;
+    width: 100%;
+	height: 100%;
+    float: left;
+	background-color: #c7c7c7;
+
+}
+#chart-03{
+    box-sizing: border-box;
+    width: 100%;
+	height: 100%;
+    float: left;
+	background-color: #c7c7c7;
+}
+#chart-boro-sheds{
+    box-sizing: border-box;
+    width: 100%;
+	height: 180px;
+    float: left;
+	background-color: #c7c7c7;
+	margin-bottom: 10px;
+}
+#borosheds{
+	margin-top: 10px;
+	padding: 0px;
+	height: 150px;
+	width: 100%;
+	background-color: #fff;
+}
+#cdsheds{
+	margin-top: 10px;
+	padding: 0px;
+	height: 140px;
+	width: 100%;
+	background-color: #fff;
+}
+
+#shedApp{
+	margin-top: 10px;
+	padding: 0px;
+	height: 170px;
+	width: 100%;
+	background-color: #fff;
+}
+
+#chart-cd{
+    box-sizing: border-box;
+    width: 100%;
+	height: 200px;
+    <!-- border: 0.5px solid gray; -->
+    float: left;
+	background-color: #c7c7c7;
+	<!-- margin: 0px 0px 12px; -->
+}
+
+#chart-app{
+    box-sizing: border-box;
+    width: 100%;
+	height: 230px;
+    <!-- border: 0.5px solid gray; -->
+    float: left;
+	background-color: #c7c7c7;
+	<!-- margin: 0px 0px 12px; -->
+}
+.summarytxt{
+	font-size: 20px;
+	font-weight: bold;
+	color: #FFFFFF;
+	font-family: 'Open Sans', sans-serif; 
+	font-family: 'Roboto', sans-serif;
+	text-align: center;
+	line-height: 97%;
+	padding-top: 10px;
+}
+.summarytxt_sheds{
+	font-size: 20px;
+	font-weight: bold;
+	color: #FFFFFF;
+	font-family: 'Open Sans', sans-serif;
+	font-family: 'Roboto', sans-serif;
+	text-align: center;
+	line-height: 97%;
+	padding-top: 5px;
+}
+.summarytxt_avgAge{
+	font-size: 20px;
+	font-weight: bold;
+	color: #FFFFFF;
+	font-family: 'Open Sans', sans-serif;
+	font-family: 'Roboto', sans-serif;
+	text-align: center;
+	line-height: 97%;
+	padding-top: 5px;
+}
+.summarytxt_feet{
+	font-size: 20px;
+	font-weight: bold;
+	color: #FFFFFF;
+	font-family: 'Open Sans', sans-serif;
+	font-family: 'Roboto', sans-serif;
+	text-align: center;
+	line-height: 97%;
+	padding-top: 5px;
+}
+.subtxt{
+	font-size: 15px;
+	font-style: italic;
+	color: #FFFFFF;
+	font-family: 'Open Sans', sans-serif;
+	font-family: 'Roboto', sans-serif;
+	text-align: center;
+	<!-- line-height: 97%; -->
+	<!-- padding-top: 10px; -->
+}
+#summary1_sheds{
+	font-size: 35px;
+	font-weight: bold;
+	color: #547A95;
+	font-family: 'Open Sans', sans-serif;
+	font-family: 'Roboto', sans-serif;	
+	text-align: center;
+	line-height: 125%;
+	
+}
+#summary2_avgAge{
+	font-size: 35px;
+	font-weight: bold;
+	color: #547A95;
+	font-family: 'Open Sans', sans-serif;
+	font-family: 'Roboto', sans-serif;	
+	text-align: center;
+	line-height: 125%;
+	
+}
+#summary3_feet{
+	font-size: 35px;
+	font-weight: bold;
+	color: #547A95;
+	font-family: 'Open Sans', sans-serif;
+	font-family: 'Roboto', sans-serif;	
+	text-align: center;
+	line-height: 125%;
+	
+}
+.nv-x text{
+	margin-top: 50px;
+	font-size: 10px;
+	fill: #547A95;
+}
+.form-check label {
+	font: 14px/16px Arial, Helvetica, sans-serif;
+	margin: 10px;	
+	vertical-align: middle;
+	/* font-variant: small-caps; */
+}
+
+.legendShed {
+		padding: 6px 10px;
+		font: 14px/16px Arial, Helvetica, sans-serif;
+		background: white;
+		background: rgba(255,255,255,0.8);
+		border: 2px solid #707070;
+		box-shadow: 0 0 15px rgba(0,0,0,0.2);
+		border-radius: 7px;
+		width: 160px;
+		
+
+}
+.legendCD {
+		padding: 6px 10px;
+		font: 14px/16px Arial, Helvetica, sans-serif;
+		background: white;
+		background: rgba(255,255,255,0.8);
+		border: 2px solid #707070;
+		box-shadow: 0 0 15px rgba(0,0,0,0.2);
+		border-radius: 7px;
+		width: 160px;
+		height: 100%;
+
+
+}
+.legendCD i {
+		width: 15px;
+		height: 15px;
+		float: left;
+		margin-right: 8px;
+		opacity: 1;
+}
+#legendTitleCD {
+		text-align: center;
+		margin-bottom: 15px;
+		font-variant: small-caps;
+		font-size: 15px;
+		font-weight: bold;
+}
+.symbolsContainerCD {
+		float: left;
+		margin-left: 50px;
+}
+
+
+#legendTitleSQFT {
+		text-align: center;
+		margin-bottom: 15px;
+		font-variant: small-caps;
+		font-size: 15px;
+		font-weight: bold;
+		padding-top: 5px;
+}
+.symbolsContainerSQFT {
+		float: left;
+		margin-left: 50px;
+}
+.legendCircleSQFT {
+		border-radius: 50%;
+		border: 1px solid #1B191B;
+		<!-- background: rgba(0, 159, 255, .4); -->
+		<!-- background: rgba(84, 122, 149, .4); -->
+		background: rgba(35, 35, 35, .4);
+		display: inline-block;
+}
+.legendValueSQFT {
+		position: absolute;	
+		right: 8px;
+}
+
+.ui {
+	top: 350px;
+	left: 12px;
+	padding: 8px;
+	position: absolute;
+	background: white;
+	background: rgba(255,255,255,0.8);
+	border: 2px solid #707070;
+	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+	border-radius: 7px;
+	width: 220px;
+}
+.ui-radio {
+	top: 225px;
+	left: 12px;
+	padding: 8px;
+	position: absolute;
+	background: white;
+	background: rgba(255,255,255,0.8);
+	border: 2px solid #707070;
+	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+	border-radius: 7px;
+	width: 220px;
+}
+.form-check {
+	filter: grayscale(1);
+}
+#cdtxt {
+	line-height: 20px;
+}
+
+/* The switch - the box around the slider */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 32px;
+  height: 20px;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 12px;
+  width: 12px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + #sliderCom {
+  background-color: #DA8012;
+}
+input:focus + #sliderCom {
+  box-shadow: 0 0 1px #DA8012;
+}
+input:checked + #sliderNonCom {
+  background-color: #547A95;
+}
+
+input:focus + #sliderNonCom {
+  box-shadow: 0 0 1px #547A95;
+}
+input:checked + .slider:before {
+  -webkit-transform: translateX(12px);
+  -ms-transform: translateX(12px);
+  transform: translateX(12px);
+}
+#sliderTxt {
+	line-height: 12px;
+	vertical-align: middle;
+}
+#slider-step {
+	top: 45px;
+	width: 350px;
+	position: absolute;
+	margin-left: 30px;
+	<!-- margin-top: 100px; -->
+	
+	background: white;
+	background: rgba(255,255,255,0.8);
+	border: 2px solid #707070;
+	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+	border-radius: 7px;
+}
+.sliderContainer {
+	top: 430px;
+	left: 12px;
+	padding: 8px;
+	position: absolute;
+	background: white;
+	background: rgba(255,255,255,0.8);
+	border: 2px solid #707070;
+	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+	border-radius: 7px;
+	width: 425px;
+	height: 110px;
+}
+#ageSliderTxt {
+		text-align: center;
+		margin-bottom: 15px;
+		font-variant: small-caps;
+		font-size: 15px;
+		font-weight: bold;
+}
+#sourceTxt {
+  padding-top:55px;
+  padding-left: 10px;
+  text-align:left;
+}
+</style>
+<body>
+<div class="container">
+			<div class="navbar navbar-fixed-top" role="navigation" style="color:white;background-color:RGB(61,74,87);">
+			<a class="logo" href="https://www1.nyc.gov/site/buildings/index.page" target="_blank"> </a>
+				<div class="nav navbar-nav" style="margin-left:15px;margin-top:10px;font-size:26px;font-weight:bold;text-align:center;">
+					VIOLATION AMOUNTS DUE
+				</div>
+			</div>
+</div>
+	<p class="small text-muted" id="sourceTxt">Built by DOB Analytics <a href="https://www1.nyc.gov/site/buildings/dob/analytics-reports.page" target="_blank">Dev Squad</a> | This map shows the total amount of violation fees due to the Department of Buildings that exceeds $10,000 per building. The data is updated daily. <a id="dlData" href="no-script.html">Download Data (csv)</a></p>
+
+
+<div class="container-fluid dobmain" style="padding-top:5px;">
+	<div class="row">
+		  <div class="col-lg-9" style="height:89vh">
+			  <div class="chart-stage" id="map-container" style="border:1px solid black;height:100%;width:100%">
+			  
+				<div id="map">
+				<div id="ui-slider" class="sliderContainer" style="z-index: 401"><p id="ageSliderTxt">Filter By Amount($) Due</p>
+					<div id="slider-step" style="z-index: 401"></div>
+				</div>
+				<svg></svg>
+					<div id="ui-container" class="ui-radio" style="z-index: 401">
+					  <form id="radioBox">
+						<div>
+						  <div class="form-check">
+							<input type="radio" class="form-check-input" name="o" value="radioShed" id="radioShed" checked>
+							<label class="form-check-label" for="radioShed">Active Sheds by Age</label>
+						  </div>
+						  <div class="form-check">
+							<input type="radio" class="form-check-input" name="o" value="radioCD" id="radioCD">
+							<label class="form-check-label" for="radioCD" id="cdtxt">Community Districts</br>(Choropleth Map)</label>
+						  </div>
+						</div>
+					  </form>	
+					</div>
+					
+					
+					
+					<!-- <div id="ui-container" class="ui" style="z-index: 401"> -->
+					<div id="ui-commercial" class="ui" style="z-index: 401">
+						<span style="display:inline-block;">
+							<label class="switch">
+								<input type="checkbox" checked="true" id="chkCom">
+								<span class="slider" id="sliderCom"></span>						
+							</label>
+							
+							<span class="en" id="sliderTxt">Commercial District/Overlay</span>
+						</span>
+						<br/>
+
+						<span style="display:inline-block;">
+							<label class="switch">
+								<input type="checkbox" checked="true" id="chkNonCom">
+								<span class="slider" id="sliderNonCom"></span>
+							</label>
+							<span class="en" id="sliderTxt">Other Zoning Districts</span>
+						</span>
+					</div>
+					
+				
+				</div>
+			  </div>
+		  </div>
+			  <div class="col-lg-3" style="height:100%">
+				<div class="newchart" style="padding:5px 5px 0px 5px;border:1px solid black;height:100%;width:100%;">
+					<div class="chart-wrapper">
+					  <div class="chart-stage" id="chart-01">
+						<div class="summarytxt_sheds" ># ACTIVE SHEDS: </br>
+							<span id="summary1_sheds"></span>
+						</div>
+					  </div>
+					</div>
+					<div class="chart-wrapper">
+						<div class="chart-stage" id="chart-02">
+						  <div class="summarytxt_avgAge" >AVERAGE AGE (DAYS): </br>
+							  <span id="summary2_avgAge"></span>
+						  </div>
+						</div>
+					</div>
+					<div class="chart-wrapper">
+						<div class="chart-stage" id="chart-03">
+							<div class="summarytxt_feet" >TOTAL LINEAR FEET: </br>
+								<span id="summary3_feet"></span>
+							</div>
+						</div>
+					</div>
+					<div class="chart-wrapper">
+					  <div class="chart-stage" id="chart-boro-sheds">
+						<svg id="borosheds"></svg>
+					  </div>
+					</div>
+					<div class="chart-wrapper">
+					  <div class="chart-stage" id="chart-cd">
+						<div class="summarytxt" >TOP 5 COMMUNITY DISTRICTS </br><span id="summary3"></span></div>
+						<svg id="cdsheds"></svg>
+					  </div>
+					</div>
+					<div class="chart-wrapper">
+					  <div class="chart-stage" id="chart-app">
+						<div class="summarytxt" >TOP 5 ACTIVE SHED APPLICANTS </br><span id="summary4"></span></div>
+						<svg id="shedApp"></svg>
+					  </div>
+					</div>
+				</div>
+			  </div>
+			  
+	</div>
+	<!-- <p class="small text-muted" style=" position:relative; bottom:0px;">Built by DOB Analytics <a href="https://www1.nyc.gov/site/buildings/dob/analytics-reports.page" target="_blank">Dev Squad</a> | This map shows the location of all actively permitted sidewalk sheds and is updated daily. <a id="dlData" href="no-script.html">Download Data (csv)</a></p>	 -->
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.4.9/d3.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-format@3"></script>
+<script src="https://nycdob.github.io/EssentialActiveConstruction/Leaflet.D3SvgOverlay-master/L.D3SvgOverlay.min.js"></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="https://cdn.datatables.net/v/dt/dt-1.10.12/r-2.1.0/se-1.2.0/datatables.min.js"  type="text/javascript" charset="utf8" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.4.2/chroma.min.js"></script>
+<script src="https://nycdob.github.io/ActiveNB_A1enlargements/build/nv.d3.js"></script>
+<script src="https://d3js.org/d3-time-format.v2.min.js"></script>
+<script type="text/javascript" src="https://nycdob.github.io/ActiveNB_A1enlargements/keen/keen.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/rowgroup/1.1.1/js/dataTables.rowGroup.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/buttons/1.5.6/js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.20/api/fnSortNeutral.js"></script>
+<script src="https://nycdob.github.io/ActiveShedPermits/build/nouislider.js"></script>
+<script src="https://nycdob.github.io/ActiveShedPermits/build/wNumb.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+<script>
+
+$(document).ready(function(){
+	var today = new Date();
+	var dd = today.getDate();
+	var mm = today.getMonth()+1;
+	var yyyy = today.getFullYear();
+	today = mm + '/' + dd + '/' + yyyy;	
+	d3.select("#today").html(today);
+	var latlong = [];
+	var selection = [];
+	var formatDate = d3.time.format("%-m/%-d/%Y").parse;
+	var numberFormat = d3.format(",.0f");
+	var legendNumFormat = d3.format(",");
+    L.Control.include({
+      _refocusOnMap: L.Util.falseFn // Do nothing.
+    });	
+var map = L.map('map').setView([40.713312, -73.977407], 14);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>, &copy; <a href="https://carto.com/attributions">CARTO</a>'}).addTo(map);
+
+
+var tooltipSheds = d3.select('#map').append('div')
+	.attr('class', 'tooltipSheds');
+var width = $("#map").width(),
+	height = $("#map").height(),
+	points = [],
+	table_map = [],
+	filteredData,
+	latLngs = [],
+	pointsOverlaySQFT,
+	legendShed,
+	legendCD,
+	cat,
+	cdSheds,
+	sheds_CD,
+	ageYear = [],
+	ageVal,
+	comSlider,
+	noncomSlider,
+	radius;
+var ageFormat = 0;
+	
+onload = ready();
+
+	
+function ready(){
+
+	comSlider = document.querySelector('input[id="chkCom"]');
+	noncomSlider = document.querySelector('input[id="chkNonCom"]');
+	let _lObj={"BIN":"Bin","House Number":"House Number","Street Name":"Street Name","Borough":"Borough Name","Block":"Block","Lot":"Lot","Community District":"Community Board","Total Violation Amounts Due":" Total amount","DOB Violation Amount Due":"DOB vios amount","Energy Violation Amount Due":"Energy amount","Facade Violation Amount Due":"Facade amount","Boiler Violation Amount Due":"Boiler amount","Elevator Violation Amount Due":"Elevator amount",};
+
+	pointsOverlaySQFT = L.d3SvgOverlay(function(sel,proj){
+		var pointsUpdSQFT = sel.selectAll('circle').data(points);
+		var maxAge = d3.max(points.map(function(d) { return d.totalVioAmount }));
+		var minAge = d3.min(points.map(function(d) { return d.totalVioAmount }));
+
+		//console.log(maxAge);
+		//console.log(minAge);
+		createLegend(minAge,maxAge);
+		createLegendCD(minAge,maxAge);
+				
+		radius = d3.scale.sqrt()
+			.domain([0, maxAge])
+			.range([1, 40])
+
+		function calcPropRadius(attributeValue) {
+
+			return Math.pow(attributeValue/2000,1/2)*100;
+		}
+
+		function createLegendCD(minLabel, maxLabel) {
+			
+			legendCD = L.control( { position: "topleft" } );
+			var classBreaks = [1,50,100,250,400];
+			var colorHex = ['#D8EAED','#285578'];
+			legendCD.onAdd = function (map) {
+				
+				var div = L.DomUtil.create('div', 'legendCD');
+				$(div).append("<p id='legendTitleCD'># Active Sheds</p>");
+				div.innerHTML += '<i style="background: #dddcdc;"></i>0<br>';
+				classBreaks.push(999); // add dummy class to extend to get last class color, chroma only returns class.length - 1 colors
+				for (var i = 0; i < classBreaks.length; i++) {
+					if (i+2 === classBreaks.length) {
+						div.innerHTML += '<i style="background: ' + getColor(classBreaks[i], classBreaks, colorHex) + ';"></i> ' +
+						classBreaks[i] + '+';
+						break
+					} else {
+						div.innerHTML += '<i style="background: ' + getColor(classBreaks[i], classBreaks, colorHex) + ';"></i> ' +
+						classBreaks[i] + '&ndash;' + classBreaks[i+1] + '<br>';
+					}
+				}
+				
+				return div;
+				
+			};	
+			
+			function getColor(n,classBreaks,colorHex) {
+				//console.log(n,classBreaks,colorHex);
+				var mapScale = chroma.scale(colorHex).classes(classBreaks);
+				if (n === 0) {
+					var regionColor = '#dddcdc';
+				} else { 
+					var regionColor = mapScale(n).hex();
+				}
+				return regionColor
+			}	
+		}
+				
+		function createLegend(minLabel, maxLabel) {
+			
+			legendShed = L.control( { position: "topleft" } );
+			
+			legendShed.onAdd = function(map) {
+				var legendContainer = L.DomUtil.create("div", "legendShed");
+				var symbolsContainerSQFT = L.DomUtil.create("div", "symbolsContainerSQFT");
+				var classes = [14, 174, 362];
+				var classesLegendVals = [legendNumFormat(minLabel), legendNumFormat(Math.round((maxLabel-minLabel)/2)), legendNumFormat(maxLabel)];
+				
+				var legendCircleSQFT;
+				var lastRadius = 0;
+				var currentRadius;
+				var margin;
+				
+				L.DomEvent.addListener(legendContainer, "mousedown", function(e) {
+					L.DomEvent.stopPropagation(e);
+				});
+				
+				$(legendContainer).append("<p id='legendTitleSQFT'>Age (# of Days)</p>");
+				
+				for (var i = 0; i <= classes.length-1; i++) {
+					legendCircleSQFT = L.DomUtil.create("div", "legendCircleSQFT");
+					currentRadius = calcPropRadius(classes[i]);
+					margin = -currentRadius - lastRadius - 2;
+					
+					$(legendCircleSQFT).attr("style", "width: " + currentRadius*2 +
+							"px; height: " + currentRadius*2 +
+							"px; margin-left: " + margin + "px" );
+					
+					$(legendCircleSQFT).append("<span class='legendValueSQFT'>"+classesLegendVals[i]+"</span>");
+					
+					$(symbolsContainerSQFT).append(legendCircleSQFT);
+					
+					lastRadius = currentRadius;
+					//console.log(classes[i]);
+				}
+				$(legendContainer).append(symbolsContainerSQFT);
+				return legendContainer;
+				};	
+		}
+
+
+		pointsUpdSQFT.enter()
+			.append('circle')		
+			//.attr("_jN",(d)=>d["Job Number"])
+			.attr("bin",function(d){return d["Bin"]})
+			.attr('cx',function(d){ return proj.latLngToLayerPoint(d.latLng).x;})
+			.attr('cy',function(d){return proj.latLngToLayerPoint(d.latLng).y;})
+			<!-- .attr('class', function(d){ -->
+				<!-- switch(d.Commercial){ -->
+					<!-- case 'Commercial District/Overlay': -->
+						<!-- return 'pointCom'; -->
+						<!-- break; -->
+					<!-- case 'Other Zoning Districts': -->
+						<!-- return 'pointNonCom'; -->
+						<!-- break; -->
+				<!-- } -->
+			<!-- }) -->
+			.on('click', function(d){
+				if(d3.select(this).style("fill-opacity") != 0){
+                    tooltipSheds.html(dit( d["LATITUDE_POINT_Y"].concat(d["LONGITUDE_POINT_X"]),1));
+					tooltipSheds.style("visibility", "visible");
+				}
+			})
+			.on("mouseover", function(d, i){
+				previousColor = d3.select(this).style("fill");
+				$(this).attr("style", "cursor: pointer; fill: #eef442; fill-opacity: 0.7;");
+			})
+			.on("mouseout", function(d, i){		
+				d3.select(this).style("fill",previousColor);
+				d3.select(this).style( "fill-opacity",0.7);
+			});
+			
+			pointsUpdSQFT.attr("r", function(d) { return radius(d.totalVioAmount  / proj.scale); });
+			pointsUpdSQFT.attr("stroke-width", 1 / proj.scale);
+							
+	
+            
+        let dit=(_pl,...args)=>{
+                if (!_pl) {tooltipSheds.style("visibility","hidden");console.error("Invalid key");return ""};
+                if (!args[0] && !_pl.target.className.match(/_pr|_nx|_cl/)) {return};
+                let _dX=0;
+                let _l=[];
+                let doString = (_sObject,_dX, _l)=>{
+                        let _xx='';
+						_l[_dX]['Address']=`${_l[_dX]["House Number"]} ${_l[_dX]["Street Name"]}, ${_l[_dX]["Borough Name"]}`;
+                        for (let [k,v] of Object.entries(_sObject) ) {
+							let _str=()=>
+							{if (v.includes('Date')) {
+								let _sp=_l[_dX][`${v}`].split('-');
+								if (_sp[1]){
+									return ''.concat(_sp[1].padStart(2,'0'),'/',_sp[2].padStart(2,'0'),'/',_sp[0]);
+								}
+							}}
+                            _xx+=`<div class="_fM3_0"><div>${k}:</div><div>${_str()||_l[_dX][`${v}`]}</div></div>`;
+                        };
+						return `<div class="_tD"><div class="_nav">${_dX+1} of ${_l.length}</div><div><span class="_pr" title="Previous">&#11207;</span><span class="_nx" title="Next">&#11208;</span></div><div style="font-size:17px;" title="Close" class="material-symbols-outlined _cl">close</div></div><div class="_cycleD"><span class="_cor">${_l[_dX]["LATITUDE_POINT_Y"]}${_l[_dX]["LONGITUDE_POINT_X"]}</span>${_xx}</div>`;
+                    }
+					let _sortD=(_ID) => {
+						return points.filter(_p=> _p["LATITUDE_POINT_Y"].slice(0,3).concat(_p["LATITUDE_POINT_Y"].slice(3,7),_p["LONGITUDE_POINT_X"].slice(0,4),_p["LONGITUDE_POINT_X"].slice(4,8)) ==_ID);
+					}
+                    let _clr=()=>{
+					tooltipSheds.transition().delay(0).style("visibility", "hidden");document.querySelector(".tooltipSheds").innerHTML="";
+                    document.querySelector(".tooltipSheds").removeEventListener("click",dit);
+                }
+                if (!args[0]){
+                    if (_pl.target.classList.contains("_cl")) {
+                        _clr();return;
+                    }
+                    if (document.querySelector("._nav").textContent=="1 of 1"||(_pl.target.className!="_pr" && _pl.target.className!="_nx")){return};
+                    let _key=document.querySelector("._cor").innerText;
+                    _l=_sortD(_key);  if (!_l[0])   {_clr();console.error("Invalid key");return ""};
+                    let _sN =parseInt(document.querySelector("._nav").textContent?.match(/(.*?) /));
+                    if (!_sN| _sN<1||_sN>_l.length){_clr();console.error("Invalid key");return ""};
+                    if (_pl.target.className=="_pr") {
+                        if(_sN==1){_dX=_l.length-1} else {_dX=_sN-2;}
+                    }
+                    if (_pl.target.className=="_nx") {
+                        if(_sN==_l.length){_dX=0} else {_dX=_sN;}
+                    };
+                    document.querySelector(".tooltipSheds").innerHTML=doString(_lObj,_dX,_l);
+                } else {
+                    _l=_sortD(_pl); 
+                    if (!_l[0]) {_clr();console.error("Invalid key");return ""};
+                    document.querySelector(".tooltipSheds").removeEventListener("click",dit); 
+                    document.querySelector(".tooltipSheds").addEventListener("click",dit);
+                    return doString(_lObj,_dX,_l);
+                };
+    }
+	});
+	
+	d3.csv("data/AmountsDuePerBIN.csv",function(data){
+				points = data.filter(function(d) {
+					if( !isNaN(+d["LATITUDE_POINT_Y"]) && !isNaN(+d["LONGITUDE_POINT_X"]) ) {
+						return d;
+					}
+				}).map(function(d){
+				d.latLng = [+d["LATITUDE_POINT_Y"],+d["LONGITUDE_POINT_X"]];
+				d.bin = [d.Bin];
+				d.houseNum = d["House Number"];
+				d.street = d["Street Name"];
+				d.CD = d["Community Board"];
+				d.Borough = d["Borough Name"].toUpperCase();
+				d.block = [d.Block];
+				d.lot = [d.Lot];
+				d.dobVioAmt = +d["DOB vios amount"];
+				d.energyVioAmt = +d["Energy amount"];
+				d.facadeVioAmt = +d["Facade amount"];
+				d.boilerVioAmt = +d["Boiler amount"];
+				d.elevatorVioAmt = +d["Elevator amount"];
+				d.totalVioAmount = +d[" Total amount"];
+			return d;
+			});
+			$.getJSON("https://nycdob.github.io/ActiveShedPermits/data/CommunityDistricts.json",function(json){
+				var ageByCD = d3.nest()
+					.key(function(d) { return d.CD; })
+					.rollup(function(v) {
+						return v.length;
+					})			
+					.entries(data)
+					//console.log(ageByCD);
+
+				for(var i = 0; i < ageByCD.length; i++){
+					var commDist = ageByCD[i].key;
+					var shedValue = ageByCD[i].values;
+
+					for(var j = 0; j < json.features.length; j++){
+						var jsonCD = json.features[j].properties.boro_cd;
+
+						if(commDist == jsonCD){
+							json.features[j].properties.value = shedValue;
+							break;
+						}
+					}
+				}
+				//console.log(json);
+				var maxCD = d3.max(ageByCD, function(d){ return d.values; })
+				var minCD = d3.min(ageByCD, function(d){ return d.values; })
+				//console.log(maxCD);
+				//console.log(minCD);
+			
+				function getGraduatedColor(d) {
+					var mapScale = chroma.scale(['#D8EAED','#285578'])
+						.classes([1,50,100,250,400,500]);
+					return mapScale(d)
+				}
+
+				function polystyle(feature) {
+					return {
+						weight: 2,
+						color: '#FFFFFF',  //Outline color
+						fillOpacity: 0.9,
+						fillColor: getGraduatedColor(feature.properties.value),
+						className: sheds_CD
+					};
+				}
+
+				var addGeojson = function() {
+					var commDistSheds = L.geoJson(json, {
+						style: polystyle,
+						onEachFeature: function (feature, layer) {
+
+							//check if CD has a value
+							var val = feature.properties.value;
+							if(val){
+								layer.bindPopup('<p>COMMUNITY DISTRICT: ' +feature.properties.boro_cd+ '</br># ACTIVE SHEDS: '+feature.properties.value+'</p>');	
+							} else{
+								layer.bindPopup('<p>COMMUNITY DISTRICT: ' +feature.properties.boro_cd+ '</br># ACTIVE SHEDS: 0 </p>');	
+							}
+							layer.on('mouseover', function() { this.setStyle({'color': '#eef442', 'weight':'5'});});
+							layer.on('mouseout', function() { this.setStyle({'color': '#FFFFFF', 'weight':'2'});});
+							layer.myTag = 'commSheds';
+							
+						}
+					}).addTo(map);
+					//map.setView([40.712824, -74.005999], 11);
+				}
+
+
+				var removeGeojson = function() {
+					map.eachLayer(function(layer) {
+						if(layer.myTag === 'commSheds') {
+							map.removeLayer(layer)
+						}
+					});
+				}
+				
+				removeGeojson();
+
+				var shedRadio = document.querySelector('input[id="radioShed"]');
+					cdRadio = document.querySelector('input[id="radioCD"]');
+
+				shedRadio.onchange = function(){
+						if(this.checked){
+							removeGeojson();
+							//d3.selectAll(".pointShed").style("display", "block");
+							d3.selectAll(".pointCom").style("display", "block");
+							d3.selectAll(".pointNonCom").style("display", "block");
+							d3.selectAll(".legendShed").style("display", "block");	
+							d3.selectAll(".legendCD").style("display", "none");
+							d3.selectAll("#ui-commercial").style("display", "block");
+							d3.selectAll("#chkCom").property('checked', true);
+							d3.selectAll("#chkNonCom").property('checked', true);
+							//d3.selectAll("#step-slider").style("display", "block");
+							d3.selectAll(".sliderContainer").style("display", "block");
+							stepSlider.noUiSlider.set(0);
+						}
+				}
+				cdRadio.onchange = function(){
+						if(this.checked){
+                            tooltipSheds.style("visibility", "hidden");
+							addGeojson();
+							//d3.selectAll(".pointShed").style("display", "none");
+							d3.selectAll(".pointCom").style("display", "none");
+							d3.selectAll(".pointNonCom").style("display", "none");
+							d3.selectAll(".legendShed").style("display", "none");	
+							d3.selectAll(".legendCD").style("display", "block");
+							d3.selectAll("#ui-commercial").style("display", "none");
+							//d3.selectAll("#slider-step").style("display", "none");
+							d3.selectAll(".sliderContainer").style("display", "none");
+							stepSlider.noUiSlider.set(0);
+						}
+				}
+			});
+			
+			pointsOverlaySQFT.addTo(map);
+			
+			d3.selectAll(".pointCom").style("display", "block");
+			d3.selectAll(".pointNonCom").style("display", "block");
+			
+			legendShed.addTo(map);
+			legendCD.addTo(map);
+
+			d3.selectAll(".legendCD").style("display", "none");
+			d3.selectAll(".legendShed").style("display", "block");
+	
+			
+
+			//AGE SLIDER
+			var stepSlider = document.getElementById('slider-step');
+			
+			
+			noUiSlider.create(stepSlider, {
+				start: 0,
+				connect: 'lower',
+				range: {
+					'min': [0],
+					'max': [5]
+				},
+				
+				step: 1,
+
+				pips: {
+					mode: 'steps',
+					density: 25,
+					format: wNumb({
+						prefix: '>',
+						suffix: ' YEARS'
+					})
+				}	
+			})
+			.on("update", function(e) {
+				//console.log(e);	
+				tooltipSheds.style("visibility", "hidden");
+				formatAge(e);
+			});
+			
+			
+			//console.log(ageFormat);
+			comSlider.onchange = function(){
+					if(this.checked){
+						d3.selectAll(".pointCom").filter(function(d) {
+							return d.commercial == "Commercial District/Overlay";
+						})
+						.style("display", "block");	
+					} else {
+						d3.selectAll(".pointCom").filter(function(d) {
+							return d.commercial == "Commercial District/Overlay";
+						})
+						.style("display", "none");
+					}
+			};		
+			
+			noncomSlider.onchange = function(){
+					if(this.checked){
+						d3.selectAll(".pointNonCom").filter(function(d) {
+							return d.commercial == "Other Zoning Districts";
+						})
+						.style("display", "block");	
+
+					} else {
+						d3.selectAll(".pointNonCom").filter(function(d) {
+							return d.commercial == "Other Zoning Districts";
+						})
+						.style("display", "none");
+					}
+			};
+			
+			
+			
+			function formatAge(e){
+				//var formatter = d3.format(".2");
+				var formatter = d3.format(".4f");
+				ageFormat = formatter(e);
+				//console.log(ageFormat);	
+				setComAgeVal(ageFormat);	
+				setNonComAgeVal(ageFormat);	
+				charts(ageFormat);
+			}
+			
+			function setComAgeVal(ageFormat){
+				if (comSlider.checked===true){
+					d3.selectAll(".pointCom").style("display", "block");
+					d3.selectAll(".pointCom").filter(function(d){
+							return (d.age)/365 < ageFormat;
+					})
+					.style("display", "none");
+				} else {
+					d3.selectAll(".pointCom").style("display", "none");
+				}
+			}
+			
+			function setNonComAgeVal(ageFormat){
+				if (noncomSlider.checked===true){
+					d3.selectAll(".pointNonCom").style("display", "block");
+					d3.selectAll(".pointNonCom").filter(function(d){
+							return (d.age)/365 < ageFormat;
+					})
+					.style("display", "none");
+				} else {
+					d3.selectAll(".pointNonCom").style("display", "none");
+				}
+			}
+			comSlider.onchange = function(){	
+				tooltipSheds.style("visibility", "hidden");
+				setComAgeVal(ageFormat);
+			}
+			noncomSlider.onchange = function(){	
+				tooltipSheds.style("visibility", "hidden");
+				setNonComAgeVal(ageFormat);
+			}
+
+			
+		function charts(ageFormat){	
+			//TOTAL CITYWIDE SHEDS			
+			totalSheds = data.filter(function(d){
+					if(d.age == 0){
+						return (d.age+1)/365 > ageFormat;
+					} else {
+						return d.age/365 > ageFormat;
+					}
+						}).map(function(d) { return d.jobNum });
+			//console.log(totalSheds);
+			d3.select("#summary1_sheds").html(numberFormat(totalSheds.length));
+			
+			//AVG AGE
+			var shedsAvgAge = d3.mean(data.filter(function(d){
+							return (d.age+1)/365 > ageFormat;
+						}),function(d) { return d.age; });
+			//console.log(shedsAvgAge);
+			d3.select("#summary2_avgAge").html(numberFormat(shedsAvgAge));
+
+			//TOTAL LENGTH
+			var totalLength = d3.sum(data.filter(function(d){
+							return (d.age+1)/365 > ageFormat;
+						}).map(function(d) { return d.shedFeet }));
+			//console.log(totalLength);
+			d3.select("#summary3_feet").html(numberFormat(totalLength));
+		
+///// MULTI-CHARTS //////
+			
+			//SHEDS PER BOROUGH		
+			var filterData = data.filter(function(d){
+				return (d.age+1)/365 > ageFormat;
+			})
+			var nestBoroSheds = d3.nest()
+				.key(function(d){return d.Commercial;}).sortKeys(d3.ascending)
+				.key(function(d){return d.Borough;}).sortKeys(d3.ascending)
+				.rollup(function(v) { 
+					return v.length;
+				})
+				.entries(filterData)
+
+				
+			//FORMAT NEST TO JSON (REQUIRED BY NVD3)
+			var a1_boro=[],t=0;
+			for (vObj of nestBoroSheds ) {
+					obj={key: vObj.key }
+					a1_boro.push(obj);
+					a2=[];
+					for (x=0;x<vObj.values.length;x++) {
+					   obj1={};
+					   obj1.label=vObj.values[x].key;
+					   obj1["value"]=vObj.values[x].values 
+					   a2.push(obj1);
+					}
+					a1_boro[t].values=a2;
+					t++;
+			};
+				//console.log(nestBoroSheds);
+				shedBoroChart(a1_boro);
+				
+				
+			//TOP 5 COMMUNITY DISTRICTS
+			var nestCD = d3.nest()
+				.key(function(d) { return d.CD; })
+				.rollup(function(v) {
+					return v.length;
+				})			
+				.entries(filterData)
+				.sort(function(a, b){ return d3.descending(a.values, b.values); }).slice(0,5);	
+			//console.log(nestCD);
+			
+			var topCDKeys = nestCD.map(function(d){
+				return d.key;
+			});
+
+			
+			var topCD = filterData.filter (function(d,i){
+				return topCDKeys.indexOf(d.CD)>=0
+			});		
+
+			//console.log(topCDKeys);
+			//console.log(topCD);
+			
+			//rollup by commercial and CD
+			var nestTopCDs = d3.nest()		
+				.key(function(d) { return d.Commercial; }).sortKeys(d3.ascending)
+				.key(function(d) { return d.CD; }).sortKeys(d3.ascending)
+				.rollup(function(v) {
+					return v.length;
+				})	
+				
+				.entries(topCD)
+				.sort(function(a, b){ return d3.descending(a.values, b.values); })
+				
+			//SET MISSING KEY VALUES TO ZERO	
+			makeAllKeys = function(d){
+				var allKeys = topCDKeys
+				return allKeys
+			}				
+            nestTopCDs = nestTopCDs.map(function(d) {
+                      return {
+                        key: d.key,
+						values: makeAllKeys(+d.key).map(function(k) {
+							value = d.values.filter(function(v) {return v.key == k})[0]
+							return value || ({key: k, values:0})
+							})
+							}
+						})				
+
+			
+
+			//FORMAT NEST TO JSON (REQUIRED BY NVD3)
+			var a1_cd=[],t=0;
+			for (vObj of nestTopCDs ) {
+					obj={key: vObj.key }
+					a1_cd.push(obj);
+					a2_cd=[];
+					for (x=0;x<vObj.values.length;x++) {
+					   obj1={};
+					   obj1.label=vObj.values[x].key;
+					   obj1["value"]=vObj.values[x].values 
+					   a2_cd.push(obj1);
+					}
+					a1_cd[t].values=a2_cd;
+					t++;
+			};
+				
+			//console.log(nestTopCDs);
+			shedCDChart(nestTopCDs, topCDKeys);
+			
+			
+			//TOP 5 JOB SITES
+			
+			//get top 5 job applicants
+			var nestJob = d3.nest()
+				.key(function(d) { return d.appName; })
+				.rollup(function(v) {
+					return v.length;
+				})
+				//.entries(data)
+				.entries(filterData)
+				.sort(function(a, b){ return d3.descending(a.values, b.values); }).slice(0,5);	
+			
+			
+			var topJobsKeys = nestJob.map(function(d){
+				return d.key;
+			});
+
+			
+			var topJob = filterData.filter (function(d,i){
+				return topJobsKeys.indexOf(d.appName)>=0
+			});
+
+			//console.log(topJobsKeys);
+			//console.log(topJob);
+			
+			//rollup by commercial and applicant name
+			var nestTopJobs = d3.nest()		
+				.key(function(d) { return d.Commercial; })
+				.key(function(d) { return d.appName; }).sortKeys(d3.ascending)
+				.rollup(function(v) {
+					return v.length;
+				})			
+				.entries(topJob)
+				.sort(function(a, b){ return d3.descending(a.values, b.values); })
+				
+			//SET MISSING KEY VALUES TO ZERO	
+			makeAllKeys = function(d){
+				var allKeys = topJobsKeys
+				return allKeys
+			}				
+            nestTopJobs = nestTopJobs.map(function(d) {
+                      return {
+                        key: d.key,
+						values: makeAllKeys(+d.key).map(function(k) {
+							value = d.values.filter(function(v) {return v.key == k})[0]
+							return value || ({key: k, values:0})
+							})
+							}
+						})	
+				
+				
+			//FORMAT NEST TO JSON (REQUIRED BY NVD3)
+			var a1_top=[],t=0;
+			for (vObj of nestTopJobs ) {
+					obj={key: vObj.key }
+					a1_top.push(obj);
+					a2=[];
+					for (x=0;x<vObj.values.length;x++) {
+					   obj1={};
+					   obj1.label=vObj.values[x].key;
+					   obj1["value"]=vObj.values[x].values 
+					   a2.push(obj1);
+					}
+					a1_top[t].values=a2;
+					t++;
+			};
+			//console.log(nestJob);
+			//console.log(nestTopJobs);
+			shedAppChart(nestTopJobs, topJobsKeys);
+		
+			function shedBoroChart(data){
+
+				nv.addGraph(function() {
+					var chart = nv.models.multiBarChart()
+					.x(function(d) { return d.label })
+					.y(function(d) { return d.value })		
+					.duration(250)
+					.margin({top: 15, right: 10, bottom: 20, left: 50})
+					//.margin({right: 30})
+					//.xDomain(['Manhattan', 'Bronx', 'Brooklyn', 'Queens', 'Staten Island'])
+					.color(['#DA8012', '#547A95'])
+					.showControls(false)
+					.stacked(true);
+					
+					chart.yAxis.tickFormat(d3.format('.2s'));
+					chart.yAxis
+						.axisLabel('# Active Sheds')
+						.axisLabelDistance(-15);
+					chart.xAxis.tickFormat(function(d){
+						if (typeof this != 'undefined') {
+						 var el = d3.select(this);
+						 var p = d3.select(this.parentNode);
+						 p.append("foreignObject")
+							.attr('x', -100)
+							.attr("width", 200)
+							.attr("height", 200)
+							.append("xhtml:p")
+							.attr('style','word-wrap: break-word; text-align:center; font: normal 10px sans-serif;')
+							.html(d);    
+							el.remove();
+							return d;
+						}
+					});
+					
+					d3.select('#chart-boro-sheds svg')
+							.datum(a1_boro)
+							.transition().duration(250)
+							.call(chart);
+					nv.utils.windowResize(chart.update);
+					return chart;
+						
+				})
+			}
+			
+			function shedCDChart(data, dataSort){
+				
+				nv.addGraph(function() {
+					var chart = nv.models.multiBarChart()
+					.x(function(d) { return d.label })
+					.y(function(d) { return d.value })		
+					.duration(250)
+					.margin({top: 15, right: 10, bottom: 20, left: 50})
+					//.margin({right: 30})
+					//.xDomain(['105', '108', '107', '102', '301'])
+					.xDomain(dataSort)
+					.color(['#DA8012', '#547A95'])
+					.showControls(false)
+					.stacked(true);
+					
+					chart.yAxis.tickFormat(d3.format('.2s'));
+					chart.yAxis
+						.axisLabel('# Active Sheds')
+						.axisLabelDistance(-15);
+					chart.xAxis.tickFormat(function(d){
+						if (typeof this != 'undefined') {
+						 var el = d3.select(this);
+						 var p = d3.select(this.parentNode);
+						 p.append("foreignObject")
+							.attr('x', -100)
+							.attr("width", 200)
+							.attr("height", 200)
+							.append("xhtml:p")
+							.attr('style','word-wrap: break-word; text-align:center; font: normal 10px sans-serif;')
+							.html(d);    
+							el.remove();
+							return d;
+						}
+					});
+					
+					d3.select('#cdsheds')
+							.datum(a1_cd)
+							.transition().duration(250)
+							.call(chart);
+					nv.utils.windowResize(chart.update);
+					return chart;
+						
+				})
+			}
+			
+			function shedAppChart(data, sortData){
+				nv.addGraph(function() {
+					var chart = nv.models.multiBarChart()
+					.x(function(d) { return d.label })
+					.y(function(d) { return d.value })		
+					.duration(250)
+					.margin({top: 15, right: 10, bottom: 50, left: 50})
+					//.margin({right: 30})
+					//.xDomain(['Manhattan', 'Bronx', 'Brooklyn', 'Queens', 'Staten Island'])
+					.xDomain(sortData)
+					.color(['#DA8012', '#547A95'])
+					.showControls(false)
+					.stacked(true);
+					chart.yAxis.tickFormat(d3.format('.2s'));
+					chart.yAxis
+						.axisLabel('# Active Sheds')
+						.axisLabelDistance(-15);
+						chart.xAxis.axisLabelDistance(10);
+						chart.xAxis.tickFormat(function(d){
+							if (typeof this != 'undefined') {
+							var el = d3.select(this);
+							var p = d3.select(this.parentNode);
+							p.append("foreignObject")
+								.attr('x', -35)
+								.attr("width", 70)
+								.attr("height", 200)
+								.append("xhtml:p")
+								.attr('style','word-wrap: break-word; text-align:center; font: normal 10px sans-serif; pointer-events: auto;')
+								.html(d);
+								el.remove();
+								return d;
+							}
+					
+					});
+					
+					d3.select('#shedApp')
+							.datum(a1_top)
+							.transition().duration(250)
+							.call(chart);
+					nv.utils.windowResize(chart.update);
+					return chart;
+						
+				})
+			}
+		}				
+	});	
+			
+}
+	
+	$('#dlData').click(function(e) {
+		e.preventDefault();  //stop the browser from following
+		window.location.href = 'https://nycdob.github.io/ActiveShedPermits/data/Active_Sheds2.csv';
+		
+	});
+	
+});	
+
+</script>
+</body>
+</html>
