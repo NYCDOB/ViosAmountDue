@@ -11,9 +11,9 @@
   <link href="https://nycdob.github.io/ActiveNB_A1enlargements/build/nv.d3.css" rel="stylesheet" type="text/css">
   <link rel="stylesheet" type="text/css" href="https://nycdob.github.io/ActiveShedPermits/build/nouislider.css" media="screen" />
   <style>
-.row{
-	padding-top: 50px;
-}
+<!-- .row{ -->
+	<!-- padding-top: 5px; -->
+<!-- } -->
 body {
 	background-color: white;
 }
@@ -147,54 +147,7 @@ svg {
 	width: 100%;
 	background-color: #fff;
 }
-<!-- #chart-boro-propDwell{ -->
-    <!-- box-sizing: border-box; -->
-    <!-- width: 100%; -->
-	<!-- height: 100%; -->
-    <!-- float: left; -->
-	<!-- background-color: #c7c7c7; -->
-	<!-- margin-bottom: 10px; -->
-	<!-- display: none; -->
-<!-- } -->
-<!-- #chart-boro-estCost{ -->
-    <!-- box-sizing: border-box; -->
-    <!-- width: 100%; -->
-	<!-- height: 100%; -->
-    <!-- float: left; -->
-	<!-- background-color: #c7c7c7; -->
-	<!-- margin-bottom: 10px; -->
-	<!-- display: none; -->
-<!-- } -->
-<!-- #chart-boro-stories{ -->
-    <!-- box-sizing: border-box; -->
-    <!-- width: 100%; -->
-	<!-- height: 100%; -->
-    <!-- float: left; -->
-	<!-- background-color: #c7c7c7; -->
-	<!-- margin-bottom: 10px; -->
-	<!-- display: none; -->
-<!-- } -->
-<!-- #boropropdwell{ -->
-	<!-- margin-top: 10px; -->
-	<!-- padding: 0px; -->
-	<!-- height: 225px; -->
-	<!-- width: 100%; -->
-	<!-- background-color: #fff; -->
-<!-- } -->
-<!-- #boroestcost{ -->
-	<!-- margin-top: 10px; -->
-	<!-- padding: 0px; -->
-	<!-- height: 225px; -->
-	<!-- width: 100%; -->
-	<!-- background-color: #fff; -->
-<!-- } -->
-<!-- #borostories{ -->
-	<!-- margin-top: 10px; -->
-	<!-- padding: 0px; -->
-	<!-- height: 225px; -->
-	<!-- width: 100%; -->
-	<!-- background-color: #fff; -->
-<!-- } -->
+
 #cdsqft{
 	margin-top: 10px;
 	padding: 0px;
@@ -428,6 +381,11 @@ font-size: 12px;
 .noUi-connect{
 	background: rgba(106, 168, 79, .8);
 }
+#sourceTxt {
+  padding-top:55px;
+  padding-left: 10px;
+  text-align:left;
+}
 </style>
 <body>
 <div class="container">
@@ -438,7 +396,8 @@ font-size: 12px;
 				</div>
 			</div>
 </div>
-<div class="container-fluid dobmain" style="margin-top:20px;">
+	<p class="small text-muted" id="sourceTxt">Built by DOB Analytics <a href="https://www1.nyc.gov/site/buildings/dob/analytics-reports.page" target="_blank">Dev Squad</a> | This map includes only DOB Violations and does not include OATH Violations. The data is updated daily. <a id="dlData" href="no-script.html">Download Data (csv)</a></p>
+<div class="container-fluid dobmain" style="padding-top:5px;">
 	<div class="row">
 		  <div class="col-lg-9" style="height:89vh">
 			  <div class="chart-stage" id="map-container" style="border:1px solid black;height:100%;width:100%">
@@ -482,7 +441,7 @@ font-size: 12px;
 				</div>
 			  </div>
 	</div>
-	<p class="small text-muted" style=" position:relative; bottom:0px;">Built by DOB Analytics <a href="https://www1.nyc.gov/site/buildings/dob/analytics-reports.page" target="_blank">Dev Squad</a> | <a id="dlData" href="no-script.html">Download Data (csv)</a></p>	
+	<!-- <p class="small text-muted" style=" position:relative; bottom:0px;">Built by DOB Analytics <a href="https://www1.nyc.gov/site/buildings/dob/analytics-reports.page" target="_blank">Dev Squad</a> | <a id="dlData" href="no-script.html">Download Data (csv)</a></p>	 -->
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
@@ -650,9 +609,12 @@ function ready(){
 				}
 				}
 				_xx+=`<div class="_fM3_0"><div>${k}:</div><div>${_str()||_l[_dX][`${v}`]}</div></div>`;
+
 			};
 			let truncor = _l[_dX]["LATITUDE_POINT_Y"].slice(0,3).concat(_l[_dX]["LATITUDE_POINT_Y"].slice(3,7),_l[_dX]["LONGITUDE_POINT_X"].slice(0,4),_l[_dX]["LONGITUDE_POINT_X"].slice(4,8));
 			return `<div class="_tD"><div class="_nav">${_dX+1} of ${_l.length}</div><div><span class="_pr" title="Previous">&#11207;</span><span class="_nx" title="Next">&#11208;</span></div><div style="font-size:17px;" title="Close" class="material-symbols-outlined _cl">close</div></div><div class="_cycleD"><span class="_cor">${truncor}</span>${_xx}</div>`;
+			<!-- let truncor = _l[_dX]["LATITUDE_POINT_Y"].slice(0,3).concat(_l[_dX]["LATITUDE_POINT_Y"].slice(3,7),_l[_dX]["LONGITUDE_POINT_X"].slice(0,4),_l[_dX]["LONGITUDE_POINT_X"].slice(4,8)); -->
+			<!-- return '<div class="_tD"><div class="_nav">${_dX+1} of ${_l.length}</div><div><span class="_pr" title="Previous">&#11207;</span><span class="_nx" title="Next">&#11208;</span></div><div style="font-size:17px;" title="Close" class="material-symbols-outlined _cl">close</div></div><div class="_cycleD"><span class="_cor">${truncor}</span>${_xx}</div>'; -->
 			}
 			let _sortD=(_ID) => {
 				return points.filter(_p=> _p["LATITUDE_POINT_Y"].slice(0,3).concat(_p["LATITUDE_POINT_Y"].slice(3,7),_p["LONGITUDE_POINT_X"].slice(0,4),_p["LONGITUDE_POINT_X"].slice(4,8)) ==_ID);
@@ -687,11 +649,13 @@ function ready(){
     }
 
 
-	//d3.csv("https://raw.githubusercontent.com/NYCDOB/ActiveNB_A1enlargements/gh-pages/data/Active%20NB_Alt%201%20Enlargement%20Permits%20BIS%20and%20DOB%20NOW.csv",function(data){
-	d3.csv("data/AmountsDuePerBIN.csv",function(data){
+	d3.csv("https://raw.githubusercontent.com/NYCDOB/ViosAmountDue/gh-pages/data/AmountsDuePerBIN.csv",function(data){
 				//points = data.map(function(d){
 				points = data.filter(function(d) {
-					if( !isNaN(+d["LATITUDE_POINT_Y"]) && !isNaN(+d["LONGITUDE_POINT_X"]) ) {
+					<!-- if( !isNaN(+d["LATITUDE_POINT_Y"]) && !isNaN(+d["LONGITUDE_POINT_X"]) ) { -->
+						<!-- return d; -->
+					<!-- } -->
+					if( +d[" Total amount"] > 10000 ) {
 						return d;
 					}
 				}).map(function(d){
@@ -700,7 +664,7 @@ function ready(){
 				d.address = [d.Address];
 				d.addressBoro = [d.AddressBoro];
 				d.CD = d["Community Board"];
-				d.Borough = d["Borough Name"].toUpperCase();
+				d.Borough = d["Borough Name"];
 				d.block = [d.Block];
 				d.lot = [d.Lot];
 				d.dobVioAmt = +d["DOB vios amount"];
@@ -719,7 +683,6 @@ function ready(){
 			d3.selectAll(".legendSQFT").style("display", "block");
 			
 			//SLIDER
-
 			var rangeSlider = document.getElementById('slider-step');
 
 			noUiSlider.create(rangeSlider, {
@@ -1077,7 +1040,6 @@ function ready(){
 	
 	$('#dlData').click(function(e) {
 		e.preventDefault();  //stop the browser from following
-		// window.location.href = 'data/Active NB_Alt 1 Enlargement Permits BIS and DOB NOW.csv';
 		window.location.href = 'https://nycdob.github.io/ViosAmountDue/data/AmountsDuePerBIN.csv';
 	});
 	
