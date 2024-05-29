@@ -92,6 +92,15 @@ body {
 	.ui {
 		margin-top: -150px;
 	}
+	.sliderContainer {
+		visibility:hidden;
+	}
+	.leaflet-control-zoom {
+		visibility:hidden;
+	}
+	.tooltipBox {
+		width:auto;
+	}
 }
 
 @media ( max-width:2100px){
@@ -396,7 +405,7 @@ font-size: 12px;
 			<div class="navbar navbar-fixed-top" role="navigation" style="color:white;background-color:RGB(61,74,87);">
 			<a class="logo" href="https://www1.nyc.gov/site/buildings/index.page" target="_blank"> </a>
 				<div class="nav navbar-nav" style="margin-left:15px;margin-top:10px;font-size:26px;font-weight:bold;text-align:center;">
-					VIOLATION AMOUNT DUE - BUILDINGS THAT OWE $10,000 OR MORE
+					VIOLATION AMOUNT DUE - BUILDINGS THAT OWE $100,000 OR MORE
 				</div>
 			</div>
 </div>
@@ -503,7 +512,7 @@ onload = ready();
 	
 function ready(){
 
-		let _lObj={"BIN":"Bin","Address":"Address","Borough":"Borough","Block":"Block","Lot":"Lot","Community District":"Community Board","<b>TOTAL VIOLATION AMOUNT DUE ($)</b>":" Total amount","DOB Violation Amount Due ($)":"DOB vios amount","Energy Violation Amount Due ($)":"Energy amount","Facade Violation Amount Due ($)":"Facade amount","Boiler Violation Amount Due ($)":"Boiler amount","Elevator Violation Amount Due ($)":"Elevator amount",}
+		let _lObj={"BIN":"BIN","Address":"Address","Borough":"Borough","Block":"Block","Lot":"Lot","Community District":"Community Board","<b>TOTAL VIOLATION AMOUNT DUE ($)</b>":"DOB Civil Penalties amount","Administrative Amount Due ($)":"Administrative Enforcement amount","Energy Benchmarking Amount Due ($)":"Energy Benchmarking amount","Energy EER Amount Due ($)":"Energy EER amount","Energy Grades Amount Due ($)":"Energy Grades amount","Facades Amount Due ($)":"Facades amount","Boilers Amount Due ($)":"Boilers amount","Elevators Amount Due ($)":"Elevators amount",}
 
 
 	pointsOverlaySQFT = L.d3SvgOverlay(function(sel,proj){
@@ -515,8 +524,7 @@ function ready(){
 		createLegend(minAmt,maxAmt);
 		radius = d3.scale.sqrt()
 			.domain([0, maxAmt])
-			//.range([0, 40])
-			.range([0, 35])
+			.range([0, 25])
 		function calcPropRadius(attributeValue) {
 			return Math.pow(attributeValue/2000,1/2)*100;
 		}
@@ -582,7 +590,7 @@ function ready(){
 			.on("mouseout", function(d, i){			
 				$(this).attr("style", 	"fill: #B32420; fill-opacity: 0.5;" );
 			});
-			pointsUpdSQFT.attr("r", function(d) { return radius(d[" Total amount"]  / proj.scale); });
+			pointsUpdSQFT.attr("r", function(d) { return radius(d["DOB Civil Penalties amount"]  / proj.scale); });
 			pointsUpdSQFT.attr("stroke-width", 1 / proj.scale);
 	});
 
@@ -659,24 +667,26 @@ function ready(){
 					<!-- if( !isNaN(+d["LATITUDE_POINT_Y"]) && !isNaN(+d["LONGITUDE_POINT_X"]) ) { -->
 						<!-- return d; -->
 					<!-- } -->
-					if( +d[" Total amount"] >= 10000 ) {
+					if( +d["DOB Civil Penalties amount"] >= 100000 ) {
 						return d;
 					}
 				}).map(function(d){
 				d.latLng = [+d["LATITUDE_POINT_Y"],+d["LONGITUDE_POINT_X"]];
-				d.bin = [d.Bin];
+				d.bin = [d.BIN];
 				d.address = [d.Address];
 				d.addressBoro = [d.AddressBoro];
 				d.CD = d["Community Board"];
 				d.Borough = d["Borough Name"];
 				d.block = [d.Block];
 				d.lot = [d.Lot];
-				d.dobVioAmt = +d["DOB vios amount"];
-				d.energyVioAmt = +d["Energy amount"];
-				d.facadeVioAmt = +d["Facade amount"];
-				d.boilerVioAmt = +d["Boiler amount"];
-				d.elevatorVioAmt = +d["Elevator amount"];
-				d.totalVioAmt = +d[" Total amount"];
+				d.adminEnfAmt = +d["Administrative Enforcement amount"];
+				d.energyBMAmt = +d["Energy Benchmarking amount"];
+				d.energyEERAmt = +d["Energy EER amount"];
+				d.energyGradeAmt = +d["Energy Grades amount"];
+				d.facadeVioAmt = +d["Facades amount"];
+				d.boilerVioAmt = +d["Boilers amount"];
+				d.elevatorVioAmt = +d["Elevators amount"];
+				d.totalVioAmt = +d["DOB Civil Penalties amount"];
 			return d;
 			});		
 			
@@ -695,9 +705,9 @@ function ready(){
 				step: 500,
 				range: {
 					'min': minAmt,
-					'50%': [25000], 
-					'60%': [50000],
-					'90%': [90000],
+					//'50%': [25000], 
+					//'60%': [50000],
+					//'90%': [90000],
 					'max': maxAmt
 				},
 				format: wNumb({
