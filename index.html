@@ -512,7 +512,7 @@ onload = ready();
 	
 function ready(){
 
-		let _lObj={"BIN":"BIN","Address":"Address","Borough":"Borough","Block":"Block","Lot":"Lot","Community District":"Community Board","<b>TOTAL VIOLATION AMOUNT DUE ($)</b>":" Total DOB Civil Penalty Due ($)","Administrative Amount Due ($)":"Administrative Enforcement amount","Energy Benchmarking Amount Due ($)":"Energy Benchmarking amount","Energy EER Amount Due ($)":"Energy EER amount","Energy Grades Amount Due ($)":"Energy Grades amount","Facades Amount Due ($)":"Facades amount","Boilers Amount Due ($)":"Boilers amount","Elevators Amount Due ($)":"Elevators amount",}
+		let _lObj={"BIN":"BIN","Address":"Address","Borough":"Borough","Block":"Block","Lot":"Lot","Community District":"Community Board","<b>TOTAL VIOLATION AMOUNT DUE ($)</b>":" Total DOB Civil Penalty Due ($)","Administrative Amount Due ($)":"Administrative Enforcement","Energy Benchmarking Amount Due ($)":"Energy Benchmarking","Energy EER Amount Due ($)":"Energy EER","Energy Grades Amount Due ($)":"Energy Grades","Facades Amount Due ($)":"Facades","Boilers Amount Due ($)":"Boilers","Elevators Amount Due ($)":"Elevators",}
 
 
 	pointsOverlaySQFT = L.d3SvgOverlay(function(sel,proj){
@@ -660,8 +660,8 @@ function ready(){
     }
 
 
-	 d3.csv("https://raw.githubusercontent.com/NYCDOB/ViosAmountDue/gh-pages/data/AmountsDuePerBIN.csv",function(data){
-		//d3.csv("data/AmountsDuePerBIN.csv",function(data){
+	 //d3.csv("https://raw.githubusercontent.com/NYCDOB/ViosAmountDue/gh-pages/data/AmountsDuePerBIN.csv",function(data){
+		d3.csv("data/AmountsDuePerBIN.csv",function(data){
 				//points = data.map(function(d){
 				points = data.filter(function(d) {
 					<!-- if( !isNaN(+d["LATITUDE_POINT_Y"]) && !isNaN(+d["LONGITUDE_POINT_X"]) ) { -->
@@ -679,13 +679,13 @@ function ready(){
 				d.Borough = d["Borough Name"];
 				d.block = [d.Block];
 				d.lot = [d.Lot];
-				d.adminEnfAmt = +d["Administrative Enforcement amount"];
-				d.energyBMAmt = +d["Energy Benchmarking amount"];
-				d.energyEERAmt = +d["Energy EER amount"];
-				d.energyGradeAmt = +d["Energy Grades amount"];
-				d.facadeVioAmt = +d["Facades amount"];
-				d.boilerVioAmt = +d["Boilers amount"];
-				d.elevatorVioAmt = +d["Elevators amount"];
+				d.adminEnfAmt = +d["Administrative Enforcement"];
+				d.energyBMAmt = +d["Energy Benchmarking"];
+				d.energyEERAmt = +d["Energy EER"];
+				d.energyGradeAmt = +d["Energy Grades"];
+				d.facadeVioAmt = +d["Facades"];
+				d.boilerVioAmt = +d["Boilers"];
+				d.elevatorVioAmt = +d["Elevators"];
 				d.totalVioAmt = +d[" Total DOB Civil Penalty Due ($)"];
 			return d;
 			});		
