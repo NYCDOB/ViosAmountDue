@@ -512,7 +512,7 @@ onload = ready();
 	
 function ready(){
 
-		let _lObj={"BIN":"BIN","Address":"Address","Borough":"Borough","Block":"Block","Lot":"Lot","Community District":"Community Board","<b>TOTAL VIOLATION AMOUNT DUE ($)</b>":"DOB Civil Penalties amount","Administrative Amount Due ($)":"Administrative Enforcement amount","Energy Benchmarking Amount Due ($)":"Energy Benchmarking amount","Energy EER Amount Due ($)":"Energy EER amount","Energy Grades Amount Due ($)":"Energy Grades amount","Facades Amount Due ($)":"Facades amount","Boilers Amount Due ($)":"Boilers amount","Elevators Amount Due ($)":"Elevators amount",}
+		let _lObj={"BIN":"BIN","Address":"Address","Borough":"Borough","Block":"Block","Lot":"Lot","Community District":"Community Board","<b>TOTAL VIOLATION AMOUNT DUE ($)</b>":" Total DOB Civil Penalty Due ($)","Administrative Amount Due ($)":"Administrative Enforcement amount","Energy Benchmarking Amount Due ($)":"Energy Benchmarking amount","Energy EER Amount Due ($)":"Energy EER amount","Energy Grades Amount Due ($)":"Energy Grades amount","Facades Amount Due ($)":"Facades amount","Boilers Amount Due ($)":"Boilers amount","Elevators Amount Due ($)":"Elevators amount",}
 
 
 	pointsOverlaySQFT = L.d3SvgOverlay(function(sel,proj){
@@ -590,7 +590,7 @@ function ready(){
 			.on("mouseout", function(d, i){			
 				$(this).attr("style", 	"fill: #B32420; fill-opacity: 0.5;" );
 			});
-			pointsUpdSQFT.attr("r", function(d) { return radius(d["DOB Civil Penalties amount"]  / proj.scale); });
+			pointsUpdSQFT.attr("r", function(d) { return radius(d[" Total DOB Civil Penalty Due ($)"]  / proj.scale); });
 			pointsUpdSQFT.attr("stroke-width", 1 / proj.scale);
 	});
 
@@ -667,7 +667,7 @@ function ready(){
 					<!-- if( !isNaN(+d["LATITUDE_POINT_Y"]) && !isNaN(+d["LONGITUDE_POINT_X"]) ) { -->
 						<!-- return d; -->
 					<!-- } -->
-					if( +d["DOB Civil Penalties amount"] >= 100000 ) {
+					if( +d[" Total DOB Civil Penalty Due ($)"] >= 100000 ) {
 						return d;
 					}
 				}).map(function(d){
@@ -686,7 +686,7 @@ function ready(){
 				d.facadeVioAmt = +d["Facades amount"];
 				d.boilerVioAmt = +d["Boilers amount"];
 				d.elevatorVioAmt = +d["Elevators amount"];
-				d.totalVioAmt = +d["DOB Civil Penalties amount"];
+				d.totalVioAmt = +d[" Total DOB Civil Penalty Due ($)"];
 			return d;
 			});		
 			
