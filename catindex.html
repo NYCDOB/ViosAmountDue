@@ -1,17 +1,18 @@
+<!-- check for duplicate BINs -->
 <!DOCTYPE html>
 <html>
-<title>DOB Violations $100k+ or More</title>
-<meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
-<link rel="icon" href="https://nycdob.github.io/ActiveNB_A1enlargements/data/iconlogo.png">
-<link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
-<link rel="stylesheet" type="text/css" href="https://nycdob.github.io/ActiveNB_A1enlargements/keen/keen-dashboards.css" />
-<link href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css' rel='stylesheet' type='text/css'/>
-<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-<link href="catsindex.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
-<link href="https://nycdob.github.io/ActiveNB_A1enlargements/build/nv.d3.css" rel="stylesheet" type="text/css">
-<link rel="stylesheet" type="text/css" href="https://nycdob.github.io/ActiveShedPermits/build/nouislider.css" media="screen" />
-<style>
+  <title>DOB Violations $100k+ or More</title>
+  <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no' />
+  <link rel="icon" href="https://nycdob.github.io/ActiveNB_A1enlargements/data/iconlogo.png">
+  <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+  <link rel="stylesheet" type="text/css" href="https://nycdob.github.io/ActiveNB_A1enlargements/keen/keen-dashboards.css" />
+  <link href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css' rel='stylesheet' type='text/css'/>
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link href="catsindex.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+  <link href="https://nycdob.github.io/ActiveNB_A1enlargements/build/nv.d3.css" rel="stylesheet" type="text/css">
+  <link rel="stylesheet" type="text/css" href="https://nycdob.github.io/ActiveShedPermits/build/nouislider.css" media="screen" />
+  <style>
 </style>
 <body>
 	<dialog class="_sInfo" tabindex="-1">
@@ -52,7 +53,9 @@
 <div class="container row" style="display:flex">
 	<div class="small text-muted" id="sourceTxt">Built by DOB Analytics <a href="https://www1.nyc.gov/site/buildings/dob/analytics-reports.page" target="_blank">Dev Squad</a> | This map includes only DOB Violations and does not include OATH Violations. | Last Updated: <span id="_cat"> </span> | <a id="dlData">Download Data (csv)</a></div>
 </div>
+
 <div class="container-fluid dobmain" style="padding-top:5px;">
+	  <!-- <div id="map" style="border:1px solid black;height:90vh;zwidth:100%"> -->
 	  <div id="map" style="border:1px solid black;height:90vh">
 	  <div id="ui-slider" class="sliderContainer" style="z-index: 401"><p id="ageSliderTxt">Filter By Amount Due</p>
 		  <div id="slider-step" style="z-index: 401"></div>
@@ -81,6 +84,7 @@ $(document).ready(function(){
 	today = mm + '/' + dd + '/' + yyyy;	
 	d3.select("#today").html(today);
 	var formatDate = d3.time.format("%-m/%-d/%Y").parse;
+	//var numberFormat = d3.format(",.0f");
 	var numberFormat = d3.format("$,.2f"); 	
 	var legendNumFormat = d3.format(".3s");
     L.Control.include({
@@ -98,12 +102,13 @@ var
 	radius;	
 onload = ready();
 function ready(){
+	//document.body.addEventListener("click",    e=>{
 	document.addEventListener("click",    e=>{
 			if (e.target.getAttribute("class")?.includes("showhelp")) {
 				e.preventDefault();e.stopImmediatePropagation();e.stopPropagation();
 				const _z2=document.querySelector("._sInfo");
 				const _z9=document.querySelector(".closemodal");
-				_z9.focus();_z2.showModal();
+				_z9.focus();_z2.showModal();document.querySelector("dialog").scrollTo({top:0,left:0,behavior:"instant"});
 			} else 
 			if (e.target.getAttribute("id")?.match(/nosplash/)     ) {
 				console.log('nosplash')
@@ -119,6 +124,8 @@ function ready(){
 		var pointsUpdSQFT = sel.selectAll('circle').data(points);
 		maxAmt = d3.max(points.map(function(d) { return d.totalVioAmt }));
 		minAmt = d3.min(points.map(function(d) { return d.totalVioAmt }));
+		//console.log(maxAmt);
+		//console.log(minAmt);
 		createLegend(minAmt,maxAmt);
 		radius = d3.scale.sqrt()
 			.domain([0, maxAmt])
@@ -232,6 +239,7 @@ function ready(){
 		};
     }
 	 d3.csv("https://raw.githubusercontent.com/NYCDOB/ViosAmountDue/gh-pages/data/AmountsDuePerBINdev.csv",function(data){
+		// d3.csv("data/AmountsDuePerBINdev.csv",function(data){
 				points = data.filter(function(d) {
 					if( +d["Total DOB Civil Penalty Due ($)"] >= 100000 ) {
 						return d;
