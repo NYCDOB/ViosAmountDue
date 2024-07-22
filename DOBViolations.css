@@ -13,6 +13,7 @@ body{
     font-size:2.5em;
     font-weight:bold;
 }
+.nosplash{display:none;}
 .disclaimer {
     width: 100%;margin:0;flex:auto;margin: auto 20px;margin-top:60px;font-size:x-large;
     & div:first-child {
