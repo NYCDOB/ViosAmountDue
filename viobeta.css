@@ -7,6 +7,7 @@ body{
 ._kl{display:flex;gap: 10px 30px;padding: 20px 15px;
     background-color:#28387c;background: linear-gradient(90deg, rgba(40, 68, 100, 1) 42%, rgba(45, 125, 192, 1) 100%);flex-wrap: wrap;align-items:flex-end;color:white;font-size:2.5em;font-weight:bold;}
 ._kl div:nth-child(n+3) {font-size:2rem;}
+.nosplash{display:none;}
 .innerha  {
     display:flex;
     flex-direction:row;
